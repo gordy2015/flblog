@@ -1,0 +1,5 @@
+/.idea
+migrations/*
+*.sqlite
+*.log
+*.pyc

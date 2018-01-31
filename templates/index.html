@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>INDEX</title>
+    <style>
+       .pg-header{
+            height: 48px;
+            background-color: black;
+            color: #dddddd;
+            position: fixed;
+            top:0;
+            right:0;
+            left: 0;
+        }
+       .pg-body{
+            background-color: #2aabd2;
+            height:5000px;
+            margin-top: 40px;
+            position: fixed;
+{#            right: 0;#}
+{#            left: 0;#}
+            left:0px;
+            right:300px;
+       }
+       .pg-body2{
+            background-color: #5cb85c;
+            height:5000px;
+            margin-top: 40px;
+            position: fixed;
+{#            right: 0;#}
+{#            left: 0;#}
+            left:1620px;
+            right:0px;
+       }
+       .gt{
+            width:80px;
+            background-color: #5cb85c;
+            color: white;
+            position: fixed;
+            bottom:10px;
+            right:10px;
+       }
+    </style>
+</head>
+<body>
+    <div class="pg-header">我的博客</div>
+    <div class="pg-body">
+        <p>第一篇</p>
+        <p>第二篇</p>
+        <p>第三篇</p>
+
+            {% for i in art %}
+            <p>{{ i.title }}</p>
+            <p>{{ i.content }}</p>
+            {% endfor %}
+
+    </div>
+    <div class="pg-body2">
+        <p>标签</p>
+        <p>python  linux</p>
+    </div>
+
+    <div class="gt" onclick="GT()">返回顶部</div>
+    <script type="text/javascript">
+        function GT() {
+            document.body.scrollTop=0;
+            document.documentElement.scrollTop=0;
+        }
+    </script>
+</body>
+</html>
