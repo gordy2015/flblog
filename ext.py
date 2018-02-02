@@ -1,4 +1,3 @@
 
-class Afilter(object):
-    def show(self):
-        pass
+def strcut(s):
+    return s[0:50]

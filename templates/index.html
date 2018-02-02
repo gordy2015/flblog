@@ -46,15 +46,10 @@
 <body>
     <div class="pg-header">我的博客</div>
     <div class="pg-body">
-        <p>第一篇</p>
-        <p>第二篇</p>
-        <p>第三篇</p>
-
-            {% for i in art %}
-            <p>{{ i.title }}</p>
-            <p>{{ i.content }}</p>
-            {% endfor %}
-
+        {% for i in art %}
+            <p><h3>{{ i.title }}</h3></p>
+            <p>{{ i.content| safe|afilter  }} <a href="{{ url_for('article',art_id=i.id) }}">read more</a></p>
+        {% endfor %}
     </div>
     <div class="pg-body2">
         <p>标签</p>
