@@ -1,5 +1,6 @@
 
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import AnonymousUserMixin
 import datetime
 
 db = SQLAlchemy()
@@ -47,3 +48,8 @@ class User(db.Model):
             return False
         else:
             return True
+    def is_anonymous(self):
+        if isinstance(self,AnonymousUserMixin):
+            return True
+        else:
+            return False

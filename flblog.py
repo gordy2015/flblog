@@ -64,7 +64,8 @@ def article(art_id):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.filter_by(id=user_id).first()
+    return User.query.get(user_id)
+    # return User.query.filter_by(id=user_id).first()
 
 @app.route('/login',methods=['GET','POST'])
 def login():
@@ -91,6 +92,14 @@ def login():
                 return render_template('admin/login.html',form=form,login_false=login_false)
     return render_template('admin/login.html', form=form)
 
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     app.run()
