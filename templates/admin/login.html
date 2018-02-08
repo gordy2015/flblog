@@ -5,15 +5,32 @@
     <title>LOGIN</title>
 </head>
 <body>
+{#    <form action="{{ url_for('login') }}" method=post>#}
+{#        {{ form.csrf_token }}#}
+{#        Username:#}
+{#        <input type="text" name="username">#}
+{#        Password:#}
+{#        <input type="password" name="password">#}
+{#        <input type=submit value="登陆">#}
+{#        <p>{{ login_false }}</p>#}
+{#        <input type=hidden value="{{ next or '' }}" name=next>#}
+{#    </form>#}
+{##}
+
+
     <form action="{{ url_for('login') }}" method=post>
         {{ form.csrf_token }}
-        Username:
-        <input type="text" name="username">
-        Password:
-        <input type="password" name="password">
-        <input type=submit value="登陆">
-        <p>{{ login_false }}</p>
-{#        <input type=hidden value="{{ next or '' }}" name=next>#}
+        <p>{{ form.username.label }}{{ form.username }}</p>
+        <p>{{ form.password.label }}{{ form.password }}</p>
+        <p><input name="remember" type="checkbox">Remember Me</p>
+        <p><input type="submit" value="LOGIN"></p>
     </form>
+    <p>
+    {% for message in get_flashed_messages() %}
+        <li><font color="red">{{ message }}</font></li>
+    {% endfor %}
+    </p>
+
+
 </body>
 </html>

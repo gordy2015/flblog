@@ -10,14 +10,16 @@ from ext import strcut
 from flask_session import Session
 from flask_admin.contrib.fileadmin import FileAdmin
 import os.path as op
-from flask_login import LoginManager,login_user,logout_user,login_required
-
-
+from flask_login import LoginManager,login_user,logout_user,login_required,current_user
+from ext import bcrypt
+from flask_principal import Principal,Permission,identity_loaded,RoleNeed,UserNeed,Identity,AnonymousIdentity,identity_changed,current_app
 
 app = Flask(__name__)
 app.config.from_object(config)
 # app.config['SECRET_KEY'] = '123456'
 db.init_app(app)
+
+bcrypt.init_app(app)
 
 # logging.basicConfig(level=logging.DEBUG,
 #                     format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -27,8 +29,8 @@ db.init_app(app)
 
 app.jinja_env.filters['afilter'] = strcut
 
-admin = Admin(app,name='后台管理系统', template_mode='bootstrap2')
 
+admin = Admin(app,name='后台管理系统', template_mode='bootstrap3')
 dbs = [Article,Label,Art_Tag]
 # admin.add_view(ArtView(Article,db.session,name=u'文章'))
 for i in dbs:
@@ -45,8 +47,23 @@ login_manager.login_message = "Pls login to access this page"
 login_manager.login_message_category = "info"
 login_manager.init_app(app)
 
+
+principals = Principal()
+admin_permission = Permission(RoleNeed('admin'))
+default_permission = Permission(RoleNeed('default'))
+principals.init_app(app)
+
+@identity_loaded.connect_via(app)
+def on_identity_loaded(sender,identity):
+    identity.user = current_user
+    if hasattr(current_user, 'id'):
+        identity.provides.add(UserNeed(current_user.id))
+    if hasattr(current_user,'roles'):
+        for role in current_user.roles:
+            identity.provides.add(RoleNeed(role.name))
+
+
 @app.route('/')
-@login_required
 def index():
     if request.method == 'GET':
         art = Article.query.filter().all()
@@ -76,20 +93,17 @@ def login():
         if form.validate_on_submit():
             u = form.username.data
             p = form.password.data
-            user = User.query.filter(User.username==u,User.password==p)
-            # user = User.query.filter_by(username=u,password=p)
-            try:
-                user = user.one()
-                login_user(user)
-                flash('Logged in successfully')
-                # next = request.args.get('next')
-                # if not is_safe_url(next):
-                #     return abort(400)
-                # return redirect(next or url_for('index'))
-                return redirect('/admin')
-            except Exception as e:
-                login_false = 'Username or Password Error, Pls try again'
-                return render_template('admin/login.html',form=form,login_false=login_false)
+            # user = User.query.filter(User.username==u,User.password==p)
+            user = User.query.filter_by(username=form.username.data).one()
+            login_user(user,remember=form.remember.data)
+            m = identity_changed.send(current_app._get_current_object(),identity=Identity(user.id))
+            print(m)
+            flash('Logged in successfully')
+            # next = request.args.get('next')
+            # if not is_safe_url(next):
+            #     return abort(400)
+            # return redirect(next or url_for('index'))
+            return redirect('/admin')
     return render_template('admin/login.html', form=form)
 
 @login_manager.unauthorized_handler
@@ -97,8 +111,10 @@ def unauthorized():
     return redirect(url_for('login'))
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
+    identity_changed.send(current_app._get_current_object(),identity=AnonymousIdentity())
     return redirect(url_for('login'))
 
 if __name__ == '__main__':

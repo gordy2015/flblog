@@ -2,6 +2,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import AnonymousUserMixin
 import datetime
+from ext import bcrypt
 
 db = SQLAlchemy()
 
@@ -53,3 +54,25 @@ class User(db.Model):
             return True
         else:
             return False
+
+    def set_password(self,password):
+        return bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def check_password(self,password):
+        # print(self.password, password)
+        # print(bcrypt.check_password_hash(self.password,password))
+        return bcrypt.check_password_hash(self.password,password)
+
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    name = db.Column(db.String(64),unique=True)
+    description = db.Column(db.String(255))
+    def __init__(self,id,name):
+        self.id = id
+        self.name = name
+    def __repr__(self):
+        return "<Model Role '{}'>".format(self.name)
+
+
