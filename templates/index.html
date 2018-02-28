@@ -14,7 +14,7 @@
             left: 0;
         }
        .pg-body{
-            background-color: #2aabd2;
+            background-color: #FFFAF0;
             height:5000px;
             margin-top: 40px;
             position: fixed;
@@ -24,7 +24,7 @@
             right:300px;
        }
        .pg-body2{
-            background-color: #5cb85c;
+{#            background-color: #5cb85c;#}
             height:5000px;
             margin-top: 40px;
             position: fixed;
@@ -32,6 +32,19 @@
 {#            left: 0;#}
             left:1620px;
             right:0px;
+       }
+       .pg-body div{
+{#            display: inline-block;#}
+            padding: 5px 8px;
+            border: 1px dashed #dddddd;
+            margin: 10px;
+            width:80%;
+       }
+       .pg-body2 a{
+            display: inline-block;
+            padding: 3px 5px;
+            border: 1px solid #dddddd;
+            margin: 5px;
        }
        .gt{
             width:80px;
@@ -44,16 +57,21 @@
     </style>
 </head>
 <body>
-    <div class="pg-header">我的博客</div>
+    <div class="pg-header">我的博客 <a href="{{ url_for('admin.index') }}">博客管理</a></div>
     <div class="pg-body">
+
         {% for i in art %}
-            <p><h3>{{ i.title }}</h3></p>
+            <div>
+            <p><h2>{{ i.title }}</h2></p>
             <p>{{ i.content| safe|afilter  }} <a href="{{ url_for('article',art_id=i.id) }}">read more</a></p>
+            </div>
         {% endfor %}
+
     </div>
     <div class="pg-body2">
-        <p>标签</p>
-        <p>python  linux</p>
+        <p><strong>标签</strong></p>
+        <a>python</a>
+        <a>linux</a>
     </div>
 
     <div class="gt" onclick="GT()">返回顶部</div>

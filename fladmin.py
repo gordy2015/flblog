@@ -1,26 +1,16 @@
-from flask import Flask,render_template,request,flash
+from flask import Flask,render_template,request,flash,redirect,url_for
 import config
 import logging,json
 from flask_sqlalchemy import SQLAlchemy
 from model import db,Article,Label,Art_Tag,User
-from flask_admin import Admin,BaseView,expose
+from flask_admin import Admin,BaseView,expose,AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from wtforms import (widgets,StringField,TextAreaField,TextField,PasswordField,BooleanField,ValidationError)
 from flask_admin.contrib.fileadmin import FileAdmin
 from wtforms.validators import DataRequired,Length,EqualTo,URL
 from flask_wtf import Form,FlaskForm
-from flask_login import login_required
+from flask_login import login_required,current_user
 
-
-class MyView(BaseView):
-    @expose('/')
-    @login_required
-    def hello(self):
-        return self.render('admin/hello.html')
-    @expose('/a')
-    @login_required
-    def home(self):
-        return self.render('index.html')
 
 class CKTextAreaWidget(widgets.TextArea):
     def __call__(self, field, **kwargs):
@@ -43,6 +33,12 @@ class CKTextAreaField(TextAreaField):
 class ArtView(ModelView):
     extra_js = ["//cdn.ckeditor.com/4.8.0/standard/ckeditor.js"]
     form_overrides = {'content': CKTextAreaField}
+    def is_accessible(self):
+        return current_user.is_authenticated
+    #实现没登陆时跳转至登陆页面
+    def inaccessible_callback(self, name, **kwargs):
+        # return redirect(url_for('login', next=request.url))
+        return redirect(url_for('login'))
 
 
 class LoginForm(FlaskForm):
@@ -65,3 +61,39 @@ class LoginForm(FlaskForm):
             return False
         return True
 
+
+class MyView(BaseView):
+    # def is_accessible(self):
+    #     if current_user.is_authenticated:
+    #         return True
+    #     return False
+    def is_accessible(self):
+        return current_user.is_authenticated
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('login', next=request.url))
+    @expose('/')
+    def index(self):
+        # return self.render('admin/hello.html')
+        return redirect('/')
+
+
+class MyAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+        return current_user.is_authenticated
+    #实现没登陆时跳转至登陆页面
+    def inaccessible_callback(self, name, **kwargs):
+        # return redirect(url_for('login', next=request.url))
+        return redirect(url_for('login'))
+    @expose('/')
+    def index(self):
+        return self.render('admin/index.html')
+
+
+class MyFileAdmin(FileAdmin):
+    def is_accessible(self):
+        return current_user.is_authenticated
+    #实现没登陆时跳转至登陆页面
+    def inaccessible_callback(self, name, **kwargs):
+        # return redirect(url_for('login', next=request.url))
+        return redirect(url_for('login'))

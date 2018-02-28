@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>LOGIN</title>
+    <style type="text/css">
+        div{
+            text-align: center;
+            margin-top: 115px;
+            display: block;
+            border: 3px dashed #dddddd;
+        }
+    </style>
 </head>
 <body>
 {#    <form action="{{ url_for('login') }}" method=post>#}
@@ -17,19 +25,21 @@
 {#    </form>#}
 {##}
 
-
+<div>
     <form action="{{ url_for('login') }}" method=post>
         {{ form.csrf_token }}
         <p>{{ form.username.label }}{{ form.username }}</p>
         <p>{{ form.password.label }}{{ form.password }}</p>
         <p><input name="remember" type="checkbox">Remember Me</p>
-        <p><input type="submit" value="LOGIN"></p>
+        <span><input type="submit" value="LOGIN"></span>
+            <span><a href="{{ url_for('index') }}">返回主页</a></span>
     </form>
     <p>
     {% for message in get_flashed_messages() %}
         <li><font color="red">{{ message }}</font></li>
     {% endfor %}
     </p>
+</div>
 
 
 </body>

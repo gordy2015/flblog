@@ -3,9 +3,9 @@ import config
 import logging,json,os
 from flask_sqlalchemy import SQLAlchemy
 from model import db,Article,Label,Art_Tag,User
-from flask_admin import Admin,BaseView,expose
+from flask_admin import Admin,BaseView,expose,AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-from fladmin import MyView, CKTextAreaField,ArtView,LoginForm
+from fladmin import MyView, CKTextAreaField,ArtView,LoginForm,MyAdminIndexView,MyFileAdmin
 from ext import strcut
 from flask_session import Session
 from flask_admin.contrib.fileadmin import FileAdmin
@@ -29,16 +29,18 @@ bcrypt.init_app(app)
 
 app.jinja_env.filters['afilter'] = strcut
 
+flask_admin = Admin(app,name='后台管理系统', template_mode='bootstrap3',index_view=MyAdminIndexView())
 
-admin = Admin(app,name='后台管理系统', template_mode='bootstrap3')
-dbs = [Article,Label,Art_Tag]
 # admin.add_view(ArtView(Article,db.session,name=u'文章'))
+dbs = [Article,Label,Art_Tag]
 for i in dbs:
     # admin.add_view(ModelView(i,db.session,category='Models')) #TextAera
-    admin.add_view(ArtView(i, db.session,category='Models'))
-admin.add_view(MyView(name='hello'))
+    flask_admin.add_view(ArtView(i, db.session,category='数据库操作'))
+flask_admin.add_view(MyView(name='查看主页'))
 path = op.join(op.dirname(__file__),'static')
-admin.add_view(FileAdmin(path,'/static/',name='静态文件'))
+flask_admin.add_view(MyFileAdmin(path,'/static/',name='静态文件'))
+# flask_admin.init_app(app)
+
 
 login_manager = LoginManager()
 login_manager.login_view = "main.login"
@@ -67,8 +69,8 @@ def on_identity_loaded(sender,identity):
 def index():
     if request.method == 'GET':
         art = Article.query.filter().all()
-        for i in art:
-            print(i.title)
+        # for i in art:
+        #     print(i.title)
     return render_template('index.html', art=art)
 
 @app.route('/article/<string:art_id>')
@@ -76,7 +78,7 @@ def article(art_id):
     art = Article.query.get_or_404(art_id)
     t = art.title
     c = art.content
-    print(type(art),art,t,c)
+    # print(type(art),art,t,c)
     return render_template('article.html', article_one=art)
 
 @login_manager.user_loader
@@ -87,9 +89,8 @@ def load_user(user_id):
 @app.route('/login',methods=['GET','POST'])
 def login():
     form = LoginForm()
-    # print(form)
-    # print(form.data, form.validate_on_submit())
     if request.method == 'POST':
+        print(form.validate_on_submit())
         if form.validate_on_submit():
             u = form.username.data
             p = form.password.data
@@ -97,7 +98,7 @@ def login():
             user = User.query.filter_by(username=form.username.data).one()
             login_user(user,remember=form.remember.data)
             m = identity_changed.send(current_app._get_current_object(),identity=Identity(user.id))
-            print(m)
+            print(u,p,m)
             flash('Logged in successfully')
             # next = request.args.get('next')
             # if not is_safe_url(next):
