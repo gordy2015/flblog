@@ -6,7 +6,7 @@
 
 {% if current_user.is_authenticated %}
 
-{{ current_user.name }}欢迎来到后台管理系统！
+{{ current_user }}欢迎来到后台管理系统！
     <a href="{{ url_for('logout') }}">退出登陆</a>
 
 {% else %}

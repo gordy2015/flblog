@@ -36,7 +36,8 @@ class User(db.Model):
         self.password = password
 
     def __repr__(self):
-        return "<Model User '{}'>".format(self.username)
+       #return "<Model User '{}'>".format(self.username)
+        return "{}".format(self.username)
 
     def is_active(self):
         return True

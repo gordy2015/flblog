@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends "blogmaster.html"%}
+
+{%block title%}
     <title>Article</title>
-</head>
-<body>
+{%endblock%}
 
-        <p><h2>{{ article_one.title }}</h2></p>
-        <p>{{ article_one.content |safe }}</p>
-
-</body>
-</html>
+{%block content%}
+    <p><h2>{{ article_one.title }}</h2></p>
+    <p>{{ article_one.content |safe }}</p>
+{%endblock%}
