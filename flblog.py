@@ -89,8 +89,11 @@ def load_user(user_id):
 @app.route('/login',methods=['GET','POST'])
 def login():
     form = LoginForm()
+    if current_user.is_authenticated:
+        return redirect('/admin')
     if request.method == 'POST':
-        print(form.validate_on_submit())
+        # print(form.validate_on_submit())
+        # print(bcrypt.generate_password_hash(p).decode('utf-8'))
         if form.validate_on_submit():
             u = form.username.data
             p = form.password.data
@@ -98,7 +101,7 @@ def login():
             user = User.query.filter_by(username=form.username.data).one()
             login_user(user,remember=form.remember.data)
             m = identity_changed.send(current_app._get_current_object(),identity=Identity(user.id))
-            print(u,p,m)
+            # print(u,p,m)
             flash('Logged in successfully')
             # next = request.args.get('next')
             # if not is_safe_url(next):
