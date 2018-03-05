@@ -3,4 +3,5 @@ migrations/*
 *.sqlite
 *.log
 *.pyc
+/static/
 
