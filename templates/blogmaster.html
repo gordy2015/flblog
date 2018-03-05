@@ -11,9 +11,6 @@
             text-align:left;
             padding:5px;
         }
-        #r{
-           text-align:right;
-        }
         #nav {
             line-height:30px;
             background-color:#eeeeee;
@@ -22,10 +19,10 @@
             float:right;
             padding:5px;;
         }
-        #section {
-            width: 85%;
+        .section {
+            width: 65%;
             float:left;
-            padding:10px;
+{#            padding:10px;#}
         }
         #footer {
             background-color:black;
@@ -42,6 +39,14 @@
             bottom:10px;
             right:40px;
             text-align:center;
+        }
+        #nav a{
+            border: 1px dashed gray;
+        }
+        .section div{
+            padding: 5px 8px;
+            border: 1px dashed gray;
+            margin: 10px;
         }
        {%block css %}
        {% endblock %}
@@ -65,7 +70,7 @@
     </div>
 
     <div class="section">
-       {% block content %}
+        {% block content %}
         {% endblock %}
     </div>
 
