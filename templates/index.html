@@ -5,21 +5,12 @@
 {%endblock%}
 
 {%block content%}
-    <div class="pg-body">
-
         {% for i in art %}
             <div>
-            <p><h2>{{ i.title }}</h2></p>
-            <p>{{ i.content| safe|afilter  }} <a href="{{ url_for('article',art_id=i.id) }}">read more</a></p>
+                <p><h2>{{ i.title }}</h2></p>
+                <p>{{ i.content| safe|afilter  }} <a href="{{ url_for('article',art_id=i.id) }}">read more</a></p>
             </div>
         {% endfor %}
 
-    </div>
-    <div class="pg-body2">
-        <p><strong>标签</strong></p>
-        <a>python</a>
-        <a>linux</a>
-    </div>
 {%endblock%}
-
 
