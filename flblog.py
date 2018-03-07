@@ -29,6 +29,8 @@ bcrypt.init_app(app)
 
 app.jinja_env.filters['afilter'] = strcut
 
+
+
 flask_admin = Admin(app,name='后台管理系统', template_mode='bootstrap3',index_view=MyAdminIndexView())
 
 # admin.add_view(ArtView(Article,db.session,name=u'文章'))
@@ -64,22 +66,27 @@ def on_identity_loaded(sender,identity):
         for role in current_user.roles:
             identity.provides.add(RoleNeed(role.name))
 
-
-@app.route('/')
-def index():
+@app.route('/', methods = ['GET', 'POST'])
+@app.route('/index', methods = ['GET', 'POST'])
+@app.route('/index/<int:page>', methods = ['GET', 'POST'])
+def index(page=1):
     if request.method == 'GET':
-        art = Article.query.filter().all()
+        art = Article.query.filter().paginate(page, config.POSTS_PER_PAGE, False)
         # for i in art:
         #     print(i.title)
-    return render_template('index.html', art=art)
+        # print(art.page, art.pages)
+        label_detail = Label.query.filter().all()
+    return render_template('index.html', art=art,label_detail=label_detail)
+
 
 @app.route('/article/<string:art_id>')
 def article(art_id):
     art = Article.query.get_or_404(art_id)
-    t = art.title
-    c = art.content
+    # t = art.title
+    # c = art.content
     # print(type(art),art,t,c)
-    return render_template('article.html', article_one=art)
+    label_detail = Label.query.filter().all()
+    return render_template('article.html', article_one=art,label_detail=label_detail)
 
 @login_manager.user_loader
 def load_user(user_id):

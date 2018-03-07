@@ -63,14 +63,19 @@
         {% endif %}
     </div>
 
-    <div id="nav">
-        <p><strong>标签</strong></p>
-        <a>python</a>
-        <a>linux</a>
-    </div>
+{#    <div id="nav">#}
+{#        <p><strong>标签</strong></p>#}
+{#        <a>python</a>#}
+{#        <a>linux</a>#}
+{#    </div>#}
 
     <div class="section">
         {% block content %}
+        {% endblock %}
+    </div>
+
+    <div id="nav">
+        {% block navcontent %}
         {% endblock %}
     </div>
 
@@ -78,6 +83,10 @@
         ixzzyyxx-blog@2018
     </div>
     <div class="gt" onclick="GT()">^</div>
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script src="/static/jquery.cookie.js"></script>
+        {% block js %}
+        {% endblock %}
     <script type="text/javascript">
         function GT() {
             document.body.scrollTop=0;

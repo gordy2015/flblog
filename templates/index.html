@@ -5,12 +5,24 @@
 {%endblock%}
 
 {%block content%}
-        {% for i in art %}
+        {% for i in art.items %}
             <div>
                 <p><h2>{{ i.title }}</h2></p>
                 <p>{{ i.content| safe|afilter  }} <a href="{{ url_for('article',art_id=i.id) }}">read more</a></p>
             </div>
         {% endfor %}
-
+        {% if art.has_prev %}<a href="{{ url_for('index', page = art.prev_num) }}"><< 上一页</a>{% else %}<< 上一页{% endif %} |
+        {{ art.page }}/{{ art.pages }}|
+        {% if art.has_next %}<a href="{{ url_for('index', page = art.next_num) }}">下一页 >></a>{% else %}下一页 >>{% endif %}
 {%endblock%}
+
+{% block navcontent %}
+    <p><strong>标签</strong></p>
+     {% for i in label_detail %}
+        <a>{{ i.tag }}</a>
+    {% endfor %}
+{% endblock %}
+
+{% block js %}
+{% endblock %}
 

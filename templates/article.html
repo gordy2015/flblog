@@ -10,3 +10,9 @@
     <p>{{ article_one.content |safe }}</p>
     </div>
 {%endblock%}
+{% block navcontent %}
+    <p><strong>标签</strong></p>
+     {% for i in label_detail %}
+        <a>{{ i.tag }}</a>
+    {% endfor %}
+{% endblock %}

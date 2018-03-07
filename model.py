@@ -11,6 +11,7 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(64), nullable=False)
     content = db.Column(db.String(64), nullable=True)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.now())
     tag_id = db.Column(db.Integer)
 
 class Label(db.Model):
