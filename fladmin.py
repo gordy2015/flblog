@@ -31,7 +31,7 @@ class CKTextAreaField(TextAreaField):
 #     edit_template = 'admin/art_edit.html'
 
 class ArtView(ModelView):
-    extra_js = ["//cdn.ckeditor.com/4.8.0/standard/ckeditor.js"]
+    extra_js = ["/static/ckeditor/ckeditor.js"]
     form_overrides = {'content': CKTextAreaField}
     def is_accessible(self):
         return current_user.is_authenticated

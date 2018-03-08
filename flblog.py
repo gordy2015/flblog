@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,session,flash,abort,redirect,url_for
+from flask import Flask,render_template,request,session,flash,abort,redirect,url_for,make_response
 import config
 import logging,json,os
 from flask_sqlalchemy import SQLAlchemy
@@ -10,6 +10,7 @@ from ext import strcut
 from flask_session import Session
 from flask_admin.contrib.fileadmin import FileAdmin
 import os.path as op
+import datetime,random
 from flask_login import LoginManager,login_user,logout_user,login_required,current_user
 from ext import bcrypt
 from flask_principal import Principal,Permission,identity_loaded,RoleNeed,UserNeed,Identity,AnonymousIdentity,identity_changed,current_app
@@ -39,8 +40,8 @@ for i in dbs:
     # admin.add_view(ModelView(i,db.session,category='Models')) #TextAera
     flask_admin.add_view(ArtView(i, db.session,category='数据库操作'))
 flask_admin.add_view(MyView(name='查看主页'))
-path = op.join(op.dirname(__file__),'static')
-flask_admin.add_view(MyFileAdmin(path,'/static/',name='静态文件'))
+path = op.join(op.dirname(__file__),'static/upload')
+flask_admin.add_view(MyFileAdmin(path,'/static/',name='文件上传'))
 # flask_admin.init_app(app)
 
 
@@ -127,6 +128,47 @@ def logout():
     logout_user()
     identity_changed.send(current_app._get_current_object(),identity=AnonymousIdentity())
     return redirect(url_for('login'))
+
+
+def gen_rnd_filename():
+    filename_prefix = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    return '%s%s' % (filename_prefix, str(random.randrange(1000, 10000)))
+
+
+@app.route('/ckupload/', methods=['POST'])
+def ckupload():
+    """CKEditor file upload"""
+    error = ''
+    url = ''
+    callback = request.args.get("CKEditorFuncNum")
+    if request.method == 'POST' and 'upload' in request.files:
+        fileobj = request.files['upload']
+        fname, fext = os.path.splitext(fileobj.filename)
+        rnd_name = '%s%s' % (gen_rnd_filename(), fext)
+        filepath = os.path.join(app.static_folder, 'upload', rnd_name)
+        # 检查路径是否存在，不存在则创建
+        dirname = os.path.dirname(filepath)
+        if not os.path.exists(dirname):
+            try:
+                os.makedirs(dirname)
+            except:
+                error = 'ERROR_CREATE_DIR'
+        elif not os.access(dirname, os.W_OK):
+            error = 'ERROR_DIR_NOT_WRITEABLE'
+        if not error:
+            fileobj.save(filepath)
+            url = url_for('static', filename='%s/%s' % ('upload', rnd_name))
+    else:
+        error = 'post error'
+    res = """
+
+<script type="text/javascript">
+  window.parent.CKEDITOR.tools.callFunction(%s, '%s', '%s');
+</script>
+""" % (callback, url, error)
+    response = make_response(res)
+    response.headers["Content-Type"] = "text/html"
+    return response
 
 if __name__ == '__main__':
     app.run()

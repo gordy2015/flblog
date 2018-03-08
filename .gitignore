@@ -3,6 +3,6 @@ migrations/*
 *.sqlite
 *.log
 *.pyc
-/static/
+/static/upload
 config.py
 
