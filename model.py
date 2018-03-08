@@ -10,7 +10,7 @@ class Article(db.Model):
     __tablename__ = 'article'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(64), nullable=False)
-    content = db.Column(db.String(64), nullable=True)
+    content = db.Column(db.Text(), nullable=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.datetime.now())
     tag_id = db.Column(db.Integer)
 
